@@ -1,0 +1,320 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_adminPassword": {
+            "defaultValue": null,
+            "type": "SecureString"
+        },
+        "availabilitySets_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "virtualMachines_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "networkInterfaces_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "networkSecurityGroups_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "publicIPAddresses_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "publicIPDns_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "storageAccounts_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "image_path": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vhd_name": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vm_size": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "custom_data": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "ssh_use_key_authentication": {
+	    "defaultValue": true,
+            "type": "Bool"
+	},
+        "ssh_key": {
+	    "defaultValue": "",
+            "type": "String"
+        },
+        "virtualNetworks_name": {
+            "defaultValue": "",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Compute/availabilitySets/tostest'.",
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[parameters('availabilitySets_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "chinaeast",
+            "properties": {
+                "platformUpdateDomainCount": 5,
+                "platformFaultDomainCount": 3
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Compute/virtualMachines/tostest'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_name')]",
+            "apiVersion": "2015-06-15",
+            "location": "chinaeast",
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vm_size')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "name": "[parameters('virtualMachines_name')]",
+			"osType": "linux",
+                        "createOption": "FromImage",
+			 "image": {
+                            "uri": "[parameters('image_path')]"
+			},
+                        "vhd": {
+                            "uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', parameters('virtualMachines_name'), '-', parameters('vhd_name')))]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_name')]",
+                    "adminUsername": "[parameters('availabilitySets_name')]",
+                    "customData": "[parameters('custom_data')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": "[parameters('ssh_use_key_authentication')]",
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/', parameters('availabilitySets_name'), '/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('ssh_key')]"
+                                }
+                            ] }
+                    },
+                    "secrets": [],
+                    "adminPassword": "[parameters('virtualMachines_adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_name'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/networkInterfaces/hwtest651'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "chinaeast",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "192.168.0.2",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_name')), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_name'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/networkSecurityGroups/tostest'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "chinaeast",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "market",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8000",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1040,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "registry",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "5000",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1140,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "nfs",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "111",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1240,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "https",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1440,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "k8s-containers",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "30000-32767",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1540,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1340,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/publicIPAddresses/tostest'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "chinaeast",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('publicIPDns_name')]"
+                }
+            },
+            "dependsOn": []
+        },
+	{
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/virtualNetworks/hwtest651'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "chinaeast",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "192.168.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "192.168.0.0/24"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Storage/storageAccounts/hwtest2373'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "chinaeast",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        }
+    ]
+}
+
