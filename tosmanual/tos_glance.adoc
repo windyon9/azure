@@ -1,0 +1,50 @@
+:imagesdir: ./images
+
+== TOS概述
+'''
+
+Transwarp Operating System是为大数据应用量身订做的云操作系统。基于Docker和Kubernetes，TOS支持一键部署TDH，基于优先级的抢占式资源调度和细粒度资源分配，让大数据应用轻松拥抱云服务。未来企业对于构建统一的企业大数据平台 (Data Hub)来驱动各种业务具有强烈需求，统一的企业大数据平台需要提供以下功能：
+
+一：资源弹性共享 - 提高资源利用率
+
+* *灵活部署*：Big Data + Application
+* *资源调度*：Auto-scaling + Self-healing
+* *服务发现*：Central Repository
+
+二：隔离性 - 保障服务质量和安全性
+
+* *数据隔离*：Data Sources, Access Pattern, Confidential Levels
+* *计算隔离*：CPU, Memory, I/O
+* *应用隔离*
+
+新生的TOS满足了以上企业大数据平台的需要，支持对星环科技的一站式大数据平台Transwarp Data Hub（TDH）的一键式部署、扩容、缩容，同时也允许其他服务和大数据服务共享集群，从而提高资源的使用率。TOS创新的抢占式资源调度模型 能在保障实时业务的同时，提高集群空闲时的资源占用，让批量作业和实时业务在互不干扰的情况下分时共享计算资源。
+
+另外，在TOS上运行的TDH还引入微服务的架构，显著地降低了用户部署环境对TDH稳定性的影响，提高了部署的可用性，并且能让用户在不停机的前提下，享受到将来更新版本的升级以及修复。
+
+=== Transwarp Operating System组成部分
+
+Transwarp Operating System由以下四部分组成：
+
+* *Ring 0* : Docker/Container
+* *Ring 1* : Resource scheduler
+* *Ring 2* : Built-in system services
+* *Ring 3* : Central service repository (docker images)
+
+.Transwarp Operating System组成
+image::1tos_overview_service_repo.png[scaledwidth=99%]
+
+=== Transwarp Operating System技术优势
+
+Transwarp Operating System支持对TDH的一键式部署、扩容、缩容，同时也允许其他服务和大数据服务共享集群，从而提高资源的使用率。TOS创新的抢占式资源调度模型 能在保障实时业务的同时，提高集群空闲时的资源占用，让批量作业和实时业务在互不干扰的情况下分时共享计算资源。TOS支持：
+
+*自动部署*：用户可以通过Web、REST API or CLI 一键瞬间安装和部署集群自动根据服务的依赖性安装所需的其他服务组件。
+
+*完善的多租户支持*：Transwarp Operating System 通过重写资源管理框架实现了对CPU, Memory，硬盘和网络更好的隔离，下面是TOS与YARN和Kubernetes的对比：
+
+.TOS vs YARN vs Kubernetes
+image::1tos_yarn_k8s.png[scaledwidth=99%]
+
+*自动调整容量*：TOS 支持对TDH自动扩容和缩容，同时也允许其他服务和大数据服务共享集群，从而提高资源的使用率。TOS创新的抢占式资源调度模型 能在保障实时业务的同时，提高集群空闲时的资源占用，让批量作业和实时业务在互不干扰的情况下分时共享计算资源。
+
+*自动修复*：TOS的Replicator模块负责检测集群规模，当集群中服务发生问题时可以另起一个服务实例实现集群的自我修复功能。
+

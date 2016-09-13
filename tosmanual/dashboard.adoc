@@ -1,0 +1,68 @@
+:imagesdir: ./images
+
+== 控制面板
+'''
+
+=== 简单操作
+
+在控制面板页面，您可以管理已经安装的应用。点击控制面板的左上角会出现一个下拉菜单，在菜单中您可以选择控制面板上已安装应用的排列方式，有按照集群分类、按照状态分类、按照namespace分类和不进行分类共4种排列方式：
+
+image::1sort.png[scaledwidth=99%]
+
+点击页面右上角的 image:1filter.png[width=22] 按钮，对控制面板上显示的应用按“集群”，“状态”，“namespace”的标签进行筛选：
+
+image::1filter_1.png[scaledwidth=99%]
+
+筛选应用时，可以根据需要分别选择“集群”，“状态”，“namespace”下的0到多个标签进行组合，标签的组合规则是不同筛选条件：“集群”，“状态”，“namespace”之间取交集，同一筛选条件下的不同标签之间取并集，并集的结果作为上一级的筛选条件去与其他筛选条件取交集。若不对某一筛选条件做改动，则默认全选该筛选条件下的所有标签，也就是不把该条件作为筛选应用的条件。
+
+下图是default集群下，且状态为“deploying”或“ready”的，另所属namespace为“user/docker@transwarp.io”的所有应用：
+
+image::1filter_2.png[scaledwidth=99%]
+
+将光标移到控制面板上已经安装的任一应用上，应用右上角会出现一个“×”(如下图)，点击它可以直接删除应用：
+
+image::1delete_app.png[scaledwidth=99%]
+
+=== Inceptor的管理
+
+您也可以点击任意一个应用对它来进行管理，下面我们以Inceptor为例介绍应用管理。
+点击控制面板上的一个Inceptor服务，您会看到Inceptor应用的管理页面：
+
+[[inceptor-manage]]
+.Inceptor应用的管理页面
+
+image::1inceptor_manage.png[scaledwidth=99%]
+
+点击右上角红色的“删除”按钮，可以删除当前Inceptor服务。TOS支持的应用中有一些有自己的监控界面，这些服务页面的“组件链接”就是应用监控界面的链接。
+例如，点击“组件链接”对应的“Inceptor（4040）”，您将看到Inceptor的监控界面（如下图），在此界面上您可以查看该Inceptor应用的jobs及其他信息。
+
+image::1inceptor_stage.png[scaledwidth=99%]
+
+<<inceptor-manage>>中的三个选项各对应一个标签页，当前标签页为“概述”。点击“配置”，可以进入配置标签页（如下图）：
+
+image::1inceptor_config_master.png[scaledwidth=99%]
+
+配置标签页中有三个子页，可以分别用于设置Application Master的计算资源优先级和计算资源上限（如上图）、设置Executor的计算资源优先级和计算资源上限：
+
+image::1inceptor_config_executor.png[scaledwidth=99%]
+
+还需要设置Application Master和Executor的镜像（如下图），使用某一镜像时需要输入指定的镜像名，例如下图中的Master镜像：172.16.1.41:5000/lvlv/Inceptor：20160811-204500_rev36252.
+
+image::1inceptor_config_advanced.png[scaledwidth=99%]
+
+点击“控制台”进入控制台标签页（如下图）：
+
+image::1inceptor_control_dock.png[scaledwidth=99%]
+
+我们能看到一张列表。表的第一列“Pod”显示当前Inceptor服务中的所有角色（Master和Executor）；“节点”列显示这些角色所在的节点的IP；“容器”下显示这些角色所使用的容器。
+
+“容器链接”下，每个角色各有三个链接：“终端”是对对应角色执行操作的命令行的链接；“当前日志”是对应角色运行中产生的日志的链接；“Metrics采集”是对应角色的memory和cpu使用情况。
+
+打开“终端”的“open”链接后会打开一个terminal（如下图），登陆到指定节点，然后就可以执行各种命令了。
+
+image::1terminal.png[scaledwidth=99%]
+
+打开“Metrics采集”的链接就会看到对应角色的memory和cpu使用情况（如下图），而且可以根据页面右上角不同的时间选项卡来查看不同周期下的使用情况。
+
+image::1metrics.png[scaledwidth=99%]
+

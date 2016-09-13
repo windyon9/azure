@@ -1,0 +1,17 @@
+:imagesdir: ./images
+
+== 工单列表
+'''
+
+在工单列表中，您可以通过创建工单向星环科技寻求技术支持：
+
+[[ticket]]
+image::1ticket.png[scaledwidth=99%]
+
+点击image:1create_ticket.png[width=51]可以打开一个新工单创建窗口：
+
+image::1create_new_ticket.png[scaledwidth=99%]
+
+在该窗口中填入新工单的信息，然后点击创建便可以创建一个新的工单。
+
+<<ticket>>左侧是当前的工单，点击这些工单，页面右侧会出现工单的细节，包括工单内容、管理员回复和用户回复，您也可以在右侧加入新的回复。

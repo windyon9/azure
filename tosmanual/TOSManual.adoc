@@ -1,0 +1,84 @@
+= TOSManual
+星环信息科技（上海）有限公司 
+:toc: left
+:toc-label: 目录 
+:toclevel: 4 
+:doctype: book 
+:imagesdir: ./images 
+:source-highlighter: pygments　
+:pygments-style: autumn 
+:sectnums: 
+:sectnumlevels: 4 
+:chapter-label: 
+:example-caption: 例 
+:toc-label: 目录
+//:toc-placement: preambe
+:toclevel: 4
+:doctype: book
+:source-highlighter: pygments
+:pygments-style: autumn
+:sectnums:
+:sectnumlevels: 4
+:chapter-label:
+:example-caption:
+:figure-caption: 图　
+:toc-title: 目录　
+:table-caption: 表　
+:appendix-caption: 附录　
+:copyright: 版权信息 
+:icons: font　
+:version-label: 版本号
+:revnumber: 　
+:revdate:
+:companyname: 星环信息科技（上海）有限公司 
+:companynamesimple: 星环科技
+:companynamesimpleeng: Transwarp
+:server1: InceptorServer 1
+:server2: InceptorServer 2
+:productinitials: TDH
+:productname: Transwarp Data Hub
+:manager: Transwarp Manager
+:inceptor: Inceptor
+:discover: Discover
+:hyperbase: Hyperbase
+:hbase: HBase
+:stream: Stream
+:guardian: Guardian
+:hdfs: HDFS
+:yarn: YARN
+:elasticsearch: Elasticsearch
+:oozie: Oozie
+:hue: HUE
+:sqoop: Sqoop
+:zookeeper: Zookeeper
+:kafka: Kafka
+:hadoop: Hadoop
+
+
+{empty} +
+
+
+
+include::mianze.adoc[]
+
+
+{empty} +
+{empty} +
+
+include::tos_glance.adoc[]
+
+include::tos_overview.adoc[]
+
+include::application.adoc[]
+
+include::dashboard.adoc[]
+
+include::cluster.adoc[]
+
+include::zuke.adoc[]
+
+include::ticket.adoc[]
+
+//客户服务
+include::customersupport.adoc[]
+
