@@ -1,0 +1,1 @@
+用户在创建Transwarp云操作系统集群后，用户邮箱会收到Transwarp云市场的访问地址和账户信息。通过邮件中的信息可以登录到Transwarp云市场，以查看和管理创建好的Transwarp云操作系统集群。在Transwarp云市场中，可以将Transwarp云市场上的TDH大数据平台软件一键部署到创建好的集群上，并可以查看，管理和使用部署好的TDH大数据软件。
