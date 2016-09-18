@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "availabilitySets_name": {
+            "value": "toscluster"
+        },
+        "availabilitySets_size": {
+            "value": 3
+        },
+        "vm_size": {
+            "value": "Standard_D2_v2"
+        },
+        "ssh_use_key_authentication": {
+            "value": true
+	},
+        "virtualMachines_adminPassword": {
+            "value": "NOpa55word!!!"
+        },
+        "ssh_key": {
+	    "value": "MIIBrTCCAZigAwIBAgIBATALBgkqhkiG9w0BAQUwADAiGA8yMDE2MDYyMTExNDcw\r\nNloYDzIwMjYwNjIxMTE0NzA2WjA1MQswCQYDVQQGEwJERTEWMBQGA1UECgwNZHVt\r\nbXktc3ViamVjdDEOMAwGA1UEAwwFZHVtbXkwggEiMA0GCSqGSIb3DQEBAQUAA4IB\r\nDwAwggEKAoIBAQDrEKuMNIIYh6SUQikh6EkdKMjT9+6C0pFdWV4kx2qv0kMXXZxc\r\neoqH97gCdFNOoXIqbGVt06eSnKmp2phq4oBFy14jEXieWlRCev3GREr0ZLXiNn45\r\niBfPPvnw+IyC9lRyzQD3C7sp0EOy99qkGtUwR6bjt/he9ghCEZ6KEjt8sT+q6xCL\r\nWFyvMBbGeek6C+gQRqMqSZxK+nwx8aHdoOmfPwwudl9euNWblhkv2Mkml+iHeSrb\r\njuEyA8rKG3isL5TinBpjDq/7xO5rixoG6GtC3DloeMOK5kRDBQfKKpZtmfhpfPvD\r\nVOg8DJhc7JAnj0Lv3TMNurQpYK0K60kCvXfLAgMBAAEwCwYJKoZIhvcNAQEFAwIA\r\nAA==\r\n"
+        },
+        "storageAccounts_name": {
+            "value": "tostest590"
+        }
+    }
+}
