@@ -47,7 +47,7 @@
     },
     "variables": {
         "image_path": "https://tostest590.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd",
-        "cluster_name": "[concat('', uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name))]",
+        "cluster_name": "[concat('tos', uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name))]",
 	"addressSpace": "192.168.0.0/16",
 	"subnet": "192.168.0.0/18",
 	"masterIP": "192.168.0.4",
