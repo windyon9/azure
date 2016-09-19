@@ -2,10 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "availabilitySets_name": {
+        "email": {
+            "value": "wenyu.zhou@transwarp.io"
+        },
+        "cluster_name": {
             "value": "toscluster"
         },
-        "availabilitySets_size": {
+        "cluster_size": {
             "value": 3
         },
         "vm_size": {

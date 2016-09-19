@@ -3,36 +3,60 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "email": {
-            "defaultValue": "wenyu.zhou@transwarp.io",
-            "type": "String"
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "用户邮箱，作为TOS Market帐号并用来接受账户信息"
+            }
         },
-        "availabilitySets_name": {
-            "defaultValue": "toscluster",
-            "type": "String"
+        "cluster_name": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "集群名称"
+            }
         },
-        "availabilitySets_size": {
+        "cluster_size": {
             "defaultValue": 3,
-            "type": "int"
+            "type": "int",
+            "metadata": {
+                "description": "集群节点数"
+            }
         },
         "vm_size": {
             "defaultValue": "Standard_D3_v2",
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "description": "虚拟机类型"
+            }
         },
         "ssh_use_key_authentication": {
 	    "defaultValue": false,
-            "type": "Bool"
+            "type": "Bool",
+            "metadata": {
+                "description": "是否使用SSHKey认证方式"
+            }
 	},
         "virtualMachines_adminPassword": {
-            "defaultValue": "NOpa55word!!!",
-            "type": "SecureString"
+            "defaultValue": null,
+            "type": "SecureString",
+            "metadata": {
+                "description": "新建虚拟机的密码(不使用SSHKey认证方式)"
+            }
         },
         "ssh_key": {
 	    "defaultValue": "",
-            "type": "String"
+            "type": "String",
+            "metadata": {
+                "description": "输入您的SSHKey(使用SSHKey认证方式)"
+            }
         },
         "storageAccounts_name": {
-            "defaultValue": "tostest590",
-            "type": "String"
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "存储账号名"
+            }
         }
     },
     "variables": {
@@ -42,66 +66,66 @@
 	"masterIP": "192.168.0.4",
 	"diskCaching": "ReadWrite",
 	"sizeOfDataDisksInGB": 100,
-        "networkInterfaces_prefix": "[parameters('availabilitySets_name')]",
-        "networkSecurityGroups_name": "[parameters('availabilitySets_name')]",
-        "publicIPAddresses_prefix": "[parameters('availabilitySets_name')]",
-        "virtualNetworks_name": "[parameters('availabilitySets_name')]",
+        "networkInterfaces_prefix": "[parameters('cluster_name')]",
+        "networkSecurityGroups_name": "[parameters('cluster_name')]",
+        "publicIPAddresses_prefix": "[parameters('cluster_name')]",
+        "virtualNetworks_name": "[parameters('cluster_name')]",
 	"marketAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"marketPort": "8000",
 	"registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"registryPort": "5000",
-	"masterExternalDN": "[concat(parameters('availabilitySets_name'), '-node-0', '.chinaeast.cloudapp.chinacloudapi.cn')]",
-        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', parameters('availabilitySets_name'), '\n', 'USER_ID=', parameters('email'), '\n', 'EMAIL=', parameters('email'), '\n')]"
+	"masterExternalDN": "[concat(parameters('cluster_name'), '-node-0', '.chinaeast.cloudapp.chinacloudapi.cn')]",
+        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', parameters('cluster_name'), '\n', 'USER_ID=', parameters('email'), '\n', 'EMAIL=', parameters('email'), '\n')]"
     },
     "resources": [
         {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Compute/availabilitySets/tostest'.",
             "type": "Microsoft.Compute/availabilitySets",
-            "name": "[parameters('availabilitySets_name')]",
+            "name": "[parameters('cluster_name')]",
             "apiVersion": "2015-06-15",
             "location": "chinaeast",
             "properties": {
-                "platformUpdateDomainCount": "[add(parameters('availabilitySets_size'), 2)]",
-                "platformFaultDomainCount": "[parameters('availabilitySets_size')]"
+                "platformUpdateDomainCount": "[add(parameters('cluster_size'), 2)]",
+                "platformFaultDomainCount": "[parameters('cluster_size')]"
             },
             "dependsOn": []
         },
 	{
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Compute/virtualMachines/tostest'.",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('availabilitySets_name'), '_node_', copyIndex())]",
+            "name": "[concat(parameters('cluster_name'), '_node_', copyIndex())]",
             "apiVersion": "2015-06-15",
             "location": "chinaeast",
 	    "copy": {
 	        "name": "copyVirtualMachines", 
-	        "count": "[parameters('availabilitySets_size')]"
+	        "count": "[parameters('cluster_size')]"
 	    },
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('cluster_name'))]"
                 },
                 "hardwareProfile": {
                     "vmSize": "[parameters('vm_size')]"
                 },
                 "storageProfile": {
                     "osDisk": {
-                        "name": "[concat(parameters('availabilitySets_name'), '_osDisk_', copyIndex())]",
+                        "name": "[concat(parameters('cluster_name'), '_osDisk_', copyIndex())]",
 			"osType": "linux",
                         "createOption": "FromImage",
 			 "image": {
                             "uri": "[variables('image_path')]"
 			},
                         "vhd": {
-                            "uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', parameters('availabilitySets_name'), '-node-', copyIndex(), '-osDisk-', uniqueString(resourceGroup().id), '.vhd'))]"
+                            "uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', parameters('cluster_name'), '-node-', copyIndex(), '-osDisk-', uniqueString(resourceGroup().id, deployment().name), '.vhd'))]"
                         },
                         "caching": "ReadWrite"
                     },
                     "dataDisks": [
 			{
-			    "name": "[concat(parameters('availabilitySets_name'), '-dataDisk-', '0')]",
+			    "name": "[concat(parameters('cluster_name'), '-dataDisk-', '0')]",
 			    "lun": 0,
 			    "vhd": {
-                                "uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', parameters('availabilitySets_name'), '-node-', copyIndex(), '-dataDisk-', uniqueString(resourceGroup().id), '.vhd'))]"
+                                "uri": "[concat('https', '://', parameters('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', parameters('cluster_name'), '-node-', copyIndex(), '-dataDisk-', uniqueString(resourceGroup().id, deployment().name), '.vhd'))]"
 			    },
 			    "createOption": "Empty",
 			    "caching": "[variables('diskCaching')]",
@@ -110,15 +134,15 @@
 		    ]
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('availabilitySets_name'), '-node-', copyIndex())]",
-                    "adminUsername": "[parameters('availabilitySets_name')]",
+                    "computerName": "[concat(parameters('cluster_name'), '-node-', copyIndex())]",
+                    "adminUsername": "[parameters('cluster_name')]",
                     "customData": "[base64(variables('custom_data'))]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": "[parameters('ssh_use_key_authentication')]",
                         "ssh": {
                             "publicKeys": [
                                 {
-                                    "path": "[concat('/home/', parameters('availabilitySets_name'), '/.ssh/authorized_keys')]",
+                                    "path": "[concat('/home/', parameters('cluster_name'), '/.ssh/authorized_keys')]",
                                     "keyData": "[parameters('ssh_key')]"
                                 }
                             ] }
@@ -135,7 +159,7 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_name'))]",
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('cluster_name'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_name'))]",
                 "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaces_prefix'), '_nic_', copyIndex()))]"
             ]
@@ -184,7 +208,7 @@
             "location": "chinaeast",
 	    "copy": {
 	        "name": "copyNetworkInterfaces", 
-	        "count": "[sub(parameters('availabilitySets_size'), 1)]"
+	        "count": "[sub(parameters('cluster_size'), 1)]"
 	    },
             "properties": {
                 "ipConfigurations": [
@@ -210,7 +234,7 @@
                 }
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddresses_prefix'), '_ip_0'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaces_prefix'), '_nic_0'))]",
                 "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddresses_prefix'), '_ip_', add(copyIndex(), 1)))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name'))]"
@@ -288,13 +312,13 @@
             "location": "chinaeast",
 	    "copy": {
 	        "name": "copyPublicIPAddresses", 
-	        "count": "[parameters('availabilitySets_size')]"
+	        "count": "[parameters('cluster_size')]"
 	    },
             "properties": {
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "[concat(parameters('availabilitySets_name'), '-node-', copyIndex())]"
+                    "domainNameLabel": "[concat(parameters('cluster_name'), '-node-', copyIndex())]"
                 }
             },
             "dependsOn": []
