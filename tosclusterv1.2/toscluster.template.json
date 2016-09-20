@@ -24,10 +24,9 @@
             }
         },
         "StorageAccount": {
-            "defaultValue": "tostest590",
             "type": "String",
             "metadata": {
-                "description": "存储账户名"
+                "description": "存储账户名(请注意账户名需要在整个Azure Cloud全局唯一)"
             }
         },
         "Username": {
@@ -46,7 +45,7 @@
         }
     },
     "variables": {
-        "image_path": "https://tostest590.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd",
+        "image_path": "https://tosstor.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd",
         "cluster_name": "[concat('tos', uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name))]",
 	"addressSpace": "192.168.0.0/16",
 	"subnet": "192.168.0.0/18",
@@ -58,9 +57,9 @@
         "networkSecurityGroups_name": "[variables('cluster_name')]",
         "publicIPAddresses_prefix": "[variables('cluster_name')]",
         "virtualNetworks_name": "[variables('cluster_name')]",
-	"marketAddress": "market.starcloud.io",
+	"marketAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"marketPort": "80",
-	"registryAddress": "registry.starcloud.io",
+	"registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"registryPort": "5000",
 	"masterExternalDN": "[concat(variables('cluster_name'), '-node-0', '.chinaeast.cloudapp.chinacloudapi.cn')]",
         "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n')]"
