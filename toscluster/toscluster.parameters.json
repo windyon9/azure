@@ -8,6 +8,9 @@
         "ClusterSize": {
             "value": 3
         },
+        "StorageAccount": {
+            "value": "tostest59060"
+        },
         "VmSize": {
             "value": "Standard_D2_v2"
         },

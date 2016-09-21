@@ -283,7 +283,7 @@
             "location": "chinaeast",
 	    "copy": {
 	        "name": "copyPublicIPAddresses", 
-	        "count": "1"
+	        "count": 1
 	    },
             "properties": {
                 "publicIPAllocationMethod": "Static",
