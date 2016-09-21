@@ -62,7 +62,8 @@
 	"registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"registryPort": "5000",
 	"masterExternalDN": "[concat(variables('cluster_name'), '-node-0', '.chinaeast.cloudapp.chinacloudapi.cn')]",
-        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n')]"
+	"tdhver": "4.6",
+        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n', 'TDH_VERSION=', variables('tdhver'), '\n')]"
     },
     "resources": [
 	{
@@ -177,9 +178,6 @@
                         "name": "[concat('ipconfig', add(copyIndex(), 1))]",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddresses_prefix'), '_ip_', add(copyIndex(), 1)))]"
-                            },
                             "subnet": {
                                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name')), '/subnets/default')]"
                             }
@@ -196,7 +194,6 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaces_prefix'), '_nic_0'))]",
-                "[resourceId('Microsoft.Network/publicIPAddresses', concat(variables('publicIPAddresses_prefix'), '_ip_', add(copyIndex(), 1)))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name'))]"
             ]
@@ -231,7 +228,20 @@
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
-                            "priority": 1440,
+                            "priority": 1441,
+                            "direction": "Inbound"
+                        }
+                    },
+		    {
+                        "name": "k8s-api",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "8080",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1442,
                             "direction": "Inbound"
                         }
                     },
@@ -273,7 +283,7 @@
             "location": "chinaeast",
 	    "copy": {
 	        "name": "copyPublicIPAddresses", 
-	        "count": "[parameters('ClusterSize')]"
+	        "count": "1"
 	    },
             "properties": {
                 "publicIPAllocationMethod": "Static",
