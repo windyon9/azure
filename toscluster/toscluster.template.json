@@ -45,6 +45,7 @@
         }
     },
     "variables": {
+	"location": "[resourceGroup().location]",
         "image_path": "https://tosstor.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd",
         "cluster_name": "[concat('tos', uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name))]",
 	"addressSpace": "192.168.0.0/16",
@@ -61,7 +62,8 @@
 	"marketPort": "80",
 	"registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
 	"registryPort": "5000",
-	"masterExternalDN": "[concat(variables('cluster_name'), '-node-0', '.chinaeast.cloudapp.chinacloudapi.cn')]",
+	"masterExternalDN": "[concat(variables('cluster_name'), '-node-0.', variables('location'), '.cloudapp.chinacloudapi.cn')]",
+	"tosver": "1.2",
 	"tdhver": "4.6",
         "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n', 'TDH_VERSION=', variables('tdhver'), '\n')]"
     },
@@ -71,7 +73,7 @@
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('cluster_name'), '_node_', copyIndex())]",
             "apiVersion": "2015-06-15",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
 	    "copy": {
 	        "name": "copyVirtualMachines", 
 	        "count": "[parameters('ClusterSize')]"
@@ -131,7 +133,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(variables('networkInterfaces_prefix'), '_nic_0')]",
             "apiVersion": "2016-03-30",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
             "properties": {
                 "ipConfigurations": [
                     {
@@ -167,7 +169,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(variables('networkInterfaces_prefix'), '_nic_', add(copyIndex(), 1))]",
             "apiVersion": "2016-03-30",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
 	    "copy": {
 	        "name": "copyNetworkInterfaces", 
 	        "count": "[sub(parameters('ClusterSize'), 1)]"
@@ -203,7 +205,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('networkSecurityGroups_name')]",
             "apiVersion": "2016-03-30",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
             "properties": {
                 "securityRules": [
                     {
@@ -280,7 +282,7 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[concat(variables('publicIPAddresses_prefix'), '_ip_', copyIndex())]",
             "apiVersion": "2016-03-30",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
 	    "copy": {
 	        "name": "copyPublicIPAddresses", 
 	        "count": 1
@@ -299,7 +301,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworks_name')]",
             "apiVersion": "2016-03-30",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -327,7 +329,7 @@
             "kind": "Storage",
             "name": "[variables('storageAccounts_name')]",
             "apiVersion": "2016-01-01",
-            "location": "chinaeast",
+            "location": "[variables('location')]",
             "tags": {},
             "properties": {},
             "dependsOn": []
