@@ -6,7 +6,7 @@
             "defaultValue": "",
             "type": "String",
             "metadata": {
-                "description": "用户邮箱，作为TOS Market帐号并用来接收账户和使用信息"
+                "description": "用户邮箱，作为TOS Market帐号并用来接收账户和通知等信息"
             }
         },
         "ClusterSize": {
@@ -17,16 +17,72 @@
             }
         },
         "VmSize": {
-            "defaultValue": "Standard_D3_v2",
+            "defaultValue": "Standard_DS4_v2",
+            "allowedValues": [
+                "Standard_A3",
+                "Standard_A5",
+                "Standard_A4",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2",
+                "Standard_F4",
+                "Standard_F8",
+                "Standard_F16",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2",
+                "Standard_DS11_v2",
+                "Standard_DS12_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2",
+                "Standard_DS15_v2",
+                "Standard_F4s",
+                "Standard_F8s",
+                "Standard_F16s"
+            ],
             "type": "String",
             "metadata": {
-                "description": "虚拟机类型"
+                "description": "虚拟机型号"
             }
         },
         "StorageAccount": {
             "type": "String",
             "metadata": {
-                "description": "存储账户名(请注意账户名需要在整个Azure Cloud全局唯一)"
+                "description": "存储账户名(请注意账户名需要在整个Azure Cloud全局唯一,即不与任何用户的存储帐号名相同)"
+            }
+        },
+        "ImageRegion": {
+            "defaultValue": "chinaeast",
+            "allowedValues": [
+                "chinaeast",
+                "chinanorth"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "虚拟机源镜像区域，请选择与资源组相同的区域以获得更快的部署速度"
             }
         },
         "Username": {
@@ -45,39 +101,42 @@
         }
     },
     "variables": {
-	"location": "[resourceGroup().location]",
-        "image_path": "https://tosstor.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd",
+        "tmplver": "1.0",
+        "imgver": "1.0",
+        "tosver": "1.2",
+        "tdhver": "4.6",
+        "location": "[resourceGroup().location]",
         "cluster_name": "[concat('tos', uniqueString(subscription().subscriptionId, resourceGroup().id, deployment().name))]",
-	"addressSpace": "192.168.0.0/16",
-	"subnet": "192.168.0.0/18",
-	"masterIP": "192.168.0.4",
+        "addressSpace": "192.168.0.0/16",
+        "subnet": "192.168.0.0/18",
+        "masterIP": "192.168.0.4",
+        "image_path": "[concat('https://tosstor', parameters('ImageRegion'), '.blob.core.chinacloudapi.cn/image/toscluster-tmpl.vhd')]",
         "storageAccounts_name": "[parameters('StorageAccount')]",
-	"diskCaching": "ReadWrite",
-	"sizeOfDataDisksInGB": 100,
+        "diskCaching": "ReadWrite",
+        "sizeOfDataDisksInGB": 100,
+        "initDataDisk": "auto",
         "networkInterfaces_prefix": "[variables('cluster_name')]",
         "networkSecurityGroups_name": "[variables('cluster_name')]",
         "publicIPAddresses_prefix": "[variables('cluster_name')]",
         "virtualNetworks_name": "[variables('cluster_name')]",
-	"marketAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
-	"marketPort": "80",
-	"registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
-	"registryPort": "5000",
-	"masterExternalDN": "[concat(variables('cluster_name'), '-node-0.', variables('location'), '.cloudapp.chinacloudapi.cn')]",
-	"tosver": "1.2",
-	"tdhver": "4.6",
-        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n', 'TDH_VERSION=', variables('tdhver'), '\n')]"
+        "marketAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
+        "marketPort": "80",
+        "registryAddress": "market.chinaeast.cloudapp.chinacloudapi.cn",
+        "registryPort": "5001",
+        "masterExternalDN": "[concat(variables('cluster_name'), '-node-0.', variables('location'), '.cloudapp.chinacloudapi.cn')]",
+        "custom_data": "[concat('MARKET_ADDRESS=', variables('marketAddress'), '\n', 'MARKET_PORT=', variables('marketPort'), '\n', 'REGISTRY_ADDRESS=', variables('registryAddress'), '\n', 'REGISTRY_PORT=', variables('registryPort'), '\n', 'MASTER_EXTERNAL_ADDRESS=', variables('masterExternalDN'), '\n', 'MASTER_INTERNAL_ADDRESS=', variables('masterIP'), '\n', 'CLUSTER_ID=', variables('cluster_name'), '\n', 'USER_ID=', parameters('Email'), '\n', 'EMAIL=', parameters('Email'), '\n', 'TDH_VERSION=', variables('tdhver'), '\n', 'TOS_VERSION=', variables('tosver'), '\n', 'IMG_VERSION=', variables('imgver'), '\n', 'TMPL_VERSION=', variables('tmplver'), '\n', 'INIT_DATA_DISK=', variables('initDataDisk'), '\n')]"
     },
     "resources": [
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Compute/virtualMachines/tostest'.",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('cluster_name'), '_node_', copyIndex())]",
             "apiVersion": "2015-06-15",
             "location": "[variables('location')]",
-	    "copy": {
-	        "name": "copyVirtualMachines", 
-	        "count": "[parameters('ClusterSize')]"
-	    },
+            "copy": {
+                "name": "copyVirtualMachines", 
+                "count": "[parameters('ClusterSize')]"
+            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[parameters('VmSize')]"
@@ -85,28 +144,28 @@
                 "storageProfile": {
                     "osDisk": {
                         "name": "[concat(variables('cluster_name'), '_osDisk_', copyIndex())]",
-			"osType": "linux",
+                        "osType": "linux",
                         "createOption": "FromImage",
-			 "image": {
+                         "image": {
                             "uri": "[variables('image_path')]"
-			},
+                        },
                         "vhd": {
                             "uri": "[concat('https', '://', variables('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', variables('cluster_name'), '-node-', copyIndex(), '-osDisk-', uniqueString(resourceGroup().id, deployment().name), '.vhd'))]"
                         },
                         "caching": "ReadWrite"
                     },
                     "dataDisks": [
-			{
-			    "name": "[concat(variables('cluster_name'), '-dataDisk-', '0')]",
-			    "lun": 0,
-			    "vhd": {
+                        {
+                            "name": "[concat(variables('cluster_name'), '-dataDisk-', '0')]",
+                            "lun": 0,
+                            "vhd": {
                                 "uri": "[concat('https', '://', variables('storageAccounts_name'), '.blob.core.chinacloudapi.cn', concat('/vmdisks/', variables('cluster_name'), '-node-', copyIndex(), '-dataDisk-', uniqueString(resourceGroup().id, deployment().name), '.vhd'))]"
-			    },
-			    "createOption": "Empty",
-			    "caching": "[variables('diskCaching')]",
-			    "diskSizeGB": "[variables('sizeOfDataDisksInGB')]"
-			}
-		    ]
+                            },
+                            "createOption": "Empty",
+                            "caching": "[variables('diskCaching')]",
+                            "diskSizeGB": "[variables('sizeOfDataDisksInGB')]"
+                        }
+                    ]
                 },
                 "osProfile": {
                     "computerName": "[concat(variables('cluster_name'), '-node-', copyIndex())]",
@@ -128,7 +187,7 @@
                 "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('networkInterfaces_prefix'), '_nic_', copyIndex()))]"
             ]
         },
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/networkInterfaces/hwtest651'.",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(variables('networkInterfaces_prefix'), '_nic_0')]",
@@ -164,16 +223,16 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name'))]"
             ]
         },
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/networkInterfaces/hwtest651'.",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(variables('networkInterfaces_prefix'), '_nic_', add(copyIndex(), 1))]",
             "apiVersion": "2016-03-30",
             "location": "[variables('location')]",
-	    "copy": {
-	        "name": "copyNetworkInterfaces", 
-	        "count": "[sub(parameters('ClusterSize'), 1)]"
-	    },
+            "copy": {
+                "name": "copyNetworkInterfaces", 
+                "count": "[sub(parameters('ClusterSize'), 1)]"
+            },
             "properties": {
                 "ipConfigurations": [
                     {
@@ -200,7 +259,7 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name'))]"
             ]
         },
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/networkSecurityGroups/tostest'.",
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('networkSecurityGroups_name')]",
@@ -234,19 +293,6 @@
                             "direction": "Inbound"
                         }
                     },
-		    {
-                        "name": "k8s-api",
-                        "properties": {
-                            "protocol": "Tcp",
-                            "sourcePortRange": "*",
-                            "destinationPortRange": "8080",
-                            "sourceAddressPrefix": "*",
-                            "destinationAddressPrefix": "*",
-                            "access": "Allow",
-                            "priority": 1442,
-                            "direction": "Inbound"
-                        }
-                    },
                     {
                         "name": "k8s-containers",
                         "properties": {
@@ -277,16 +323,16 @@
             },
             "dependsOn": []
         },
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/publicIPAddresses/tostest'.",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[concat(variables('publicIPAddresses_prefix'), '_ip_', copyIndex())]",
             "apiVersion": "2016-03-30",
             "location": "[variables('location')]",
-	    "copy": {
-	        "name": "copyPublicIPAddresses", 
-	        "count": 1
-	    },
+            "copy": {
+                "name": "copyPublicIPAddresses", 
+                "count": 1
+            },
             "properties": {
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -296,7 +342,7 @@
             },
             "dependsOn": []
         },
-	{
+        {
             "comments": "Generalized from resource: '/subscriptions/0844084d-505e-4924-8306-42d6bb43cb58/resourceGroups/tostest/providers/Microsoft.Network/virtualNetworks/hwtest651'.",
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[variables('virtualNetworks_name')]",
